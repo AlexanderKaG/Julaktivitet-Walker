@@ -58,6 +58,11 @@ public class MyWalker implements Walker {
         }
     }
 
+    private int gridWidth;
+    private int gridHeight;
+    private int xMid;
+    private int yMid;
+
     private StartingQuadrant startingQuadrant;
 
     private boolean roundHasStarted;
@@ -75,6 +80,12 @@ public class MyWalker implements Walker {
 
     @Override
     public void setSize(int x, int y) {
+        gridWidth = x;
+        gridHeight = y;
+
+        xMid = gridWidth / 2;
+        yMid = gridHeight / 2;
+
         this.roundHasStarted = false;
 
         setNorthWestPath();
@@ -718,16 +729,26 @@ public class MyWalker implements Walker {
     }
 
     private Direction nextDirection(List<Coordinate> path, Coordinate currentCoordinate) {
-        if (path.isEmpty()) {
+        if (path.isEmpty() && (startingQuadrant == StartingQuadrant.NORTH_WEST
+                || startingQuadrant == StartingQuadrant.NORTH_EAST)) {
             return Direction.UP;
+        }
+        if (path.isEmpty() && (startingQuadrant == StartingQuadrant.SOUTH_WEST
+                || startingQuadrant == StartingQuadrant.SOUTH_EAST)) {
+            return Direction.DOWN;
         }
 
         if (currentCoordinate.equals(path.get(0))) {
             path.remove(0);
         }
 
-        if (path.isEmpty()) {
+        if (path.isEmpty() && (startingQuadrant == StartingQuadrant.NORTH_WEST
+                || startingQuadrant == StartingQuadrant.NORTH_EAST)) {
             return Direction.UP;
+        }
+        if (path.isEmpty() && (startingQuadrant == StartingQuadrant.SOUTH_WEST
+                || startingQuadrant == StartingQuadrant.SOUTH_EAST)) {
+            return Direction.DOWN;
         }
 
         Coordinate nextTarget = path.get(0);
@@ -759,19 +780,19 @@ public class MyWalker implements Walker {
 
     private StartingQuadrant checkStartingQuadrant(Coordinate currentCoordinate) {
 
-        if (currentCoordinate.x == 2 && currentCoordinate.y == 2) {
+        if (currentCoordinate.x < xMid && currentCoordinate.y < yMid) {
             return StartingQuadrant.NORTH_WEST;
         }
 
-        if (currentCoordinate.x == 47 && currentCoordinate.y == 2) {
+        if (currentCoordinate.x > xMid && currentCoordinate.y < yMid) {
             return StartingQuadrant.NORTH_EAST;
         }
 
-        if (currentCoordinate.x == 2 && currentCoordinate.y == 47) {
+        if (currentCoordinate.x < xMid && currentCoordinate.y > yMid) {
             return StartingQuadrant.SOUTH_WEST;
         }
 
-        if (currentCoordinate.x == 47 && currentCoordinate.y == 47) {
+        if (currentCoordinate.x > xMid && currentCoordinate.y > yMid) {
             return StartingQuadrant.SOUTH_EAST;
         }
 
