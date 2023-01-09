@@ -3,6 +3,7 @@ import se.yrgo.walkfighters.Walker;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class MyWalker implements Walker {
 
@@ -58,10 +59,11 @@ public class MyWalker implements Walker {
         }
     }
 
-    private int gridWidth;
-    private int gridHeight;
     private int xMid;
     private int yMid;
+
+    private List<Direction> directions = new ArrayList<>();
+    private List<Coordinate> history = new ArrayList<>();
 
     private StartingQuadrant startingQuadrant;
 
@@ -80,18 +82,25 @@ public class MyWalker implements Walker {
 
     @Override
     public void setSize(int x, int y) {
-        gridWidth = x;
-        gridHeight = y;
 
-        xMid = gridWidth / 2;
-        yMid = gridHeight / 2;
+        history.clear();
+
+        directions.add(Direction.UP);
+        directions.add(Direction.DOWN);
+        directions.add(Direction.RIGHT);
+        directions.add(Direction.LEFT);
+
+        xMid = x / 2;
+        yMid = y / 2;
 
         this.roundHasStarted = false;
 
-        setNorthWestPath();
-        setNorthEastPath();
-        setSouthWestPath();
-        setSouthEastPast();
+        if (x == 50 && y == 50) {
+            setNorthWestPath();
+            setNorthEastPath();
+            setSouthWestPath();
+            setSouthEastPast();
+        }
     }
 
     private void setNorthWestPath() {
@@ -729,32 +738,26 @@ public class MyWalker implements Walker {
     }
 
     private Direction nextDirection(List<Coordinate> path, Coordinate currentCoordinate) {
-        if (path.isEmpty() && (startingQuadrant == StartingQuadrant.NORTH_WEST
-                || startingQuadrant == StartingQuadrant.NORTH_EAST)) {
-            return Direction.UP;
-        }
-        if (path.isEmpty() && (startingQuadrant == StartingQuadrant.SOUTH_WEST
-                || startingQuadrant == StartingQuadrant.SOUTH_EAST)) {
-            return Direction.DOWN;
+        if (path.isEmpty()) {
+            return randomDirection();
         }
 
         if (currentCoordinate.equals(path.get(0))) {
             path.remove(0);
         }
 
-        if (path.isEmpty() && (startingQuadrant == StartingQuadrant.NORTH_WEST
-                || startingQuadrant == StartingQuadrant.NORTH_EAST)) {
-            return Direction.UP;
-        }
-        if (path.isEmpty() && (startingQuadrant == StartingQuadrant.SOUTH_WEST
-                || startingQuadrant == StartingQuadrant.SOUTH_EAST)) {
-            return Direction.DOWN;
+        if (path.isEmpty()) {
+            return randomDirection();
         }
 
         Coordinate nextTarget = path.get(0);
         Direction direction = calculateDirection(currentCoordinate, nextTarget);
 
         return direction;
+    }
+
+    private Direction randomDirection() {
+        return directions.get(ThreadLocalRandom.current().nextInt(0, 4));
     }
 
     private Direction calculateDirection(MyWalker.Coordinate currentCoordinate, MyWalker.Coordinate nextTarget) {

@@ -16,7 +16,9 @@ redan varit dör vederbörande. Man skall alltså enbart gå på sina egna rutor
 eller tomma rutor. Det finns dock inget sätt att ta reda på om en motspelare 
 gått på en ruta eller ej!
 
-Spelomgången tar omedelbart slut när endast en spelare är kvar på spelplanen.
+Spelomgången tar omedelbart slut när endast en spelare är kvar på spelplanen. En
+spelomgång är alltid maximalt 2500 förflyttningar i händelse av allt för passiva
+spelare.
 
 Hela tävligen som sådan är uppbyggd på ett turneringsformat där en match består
 av tre spelomgångar och de två tävlande som täckt flest rutor totalt under dessa
